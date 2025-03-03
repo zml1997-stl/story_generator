@@ -1,16 +1,26 @@
-from fastapi import FastAPI, Request, Form
-from fastapi.templating import Jinja2Templates
-import os
-from utils.ai_handler import generate_story
+# app.py
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from config import Config
+from flask_migrate import Migrate
 
-app = FastAPI()
-templates = Jinja2Templates(directory="templates")
+db = SQLAlchemy()
+migrate = Migrate()
 
-@app.get("/")
-async def home(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+def create_app(config_class=Config):
+    app = Flask(__name__)
+    app.config.from_object(config_class)
 
-@app.post("/start_story/")
-async def start_story(request: Request, genre: str = Form(...), name: str = Form(...)):
-    story_intro = await generate_story(genre, name)
-    return templates.TemplateResponse("index.html", {"request": request, "story": story_intro, "name": name})
+    db.init_app(app)
+    migrate.init_app(app, db)
+
+    from routes import auth, main, story
+    app.register_blueprint(auth.bp)
+    app.register_blueprint(main.bp)
+    app.register_blueprint(story.bp)
+
+    return app
+
+if __name__ == '__main__':
+    app = create_app()
+    app.run(debug=True)
