@@ -1,26 +1,26 @@
-# app.py
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 from config import Config
-from flask_migrate import Migrate
+from routes import main, auth, story
+from models import db
+from flask_login import LoginManager
 
-db = SQLAlchemy()
-migrate = Migrate()
+# Initialize Flask app
+app = Flask(__name__)
+app.config.from_object(Config)
 
-def create_app(config_class=Config):
-    app = Flask(__name__)
-    app.config.from_object(config_class)
+# Initialize database
+db.init_app(app)
 
-    db.init_app(app)
-    migrate.init_app(app, db)
+# Initialize login manager
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "auth.login"
 
-    from routes import auth, main, story
-    app.register_blueprint(auth.bp)
-    app.register_blueprint(main.bp)
-    app.register_blueprint(story.bp)
+# Register blueprints (routes)
+app.register_blueprint(main)
+app.register_blueprint(auth)
+app.register_blueprint(story)
 
-    return app
-
-if __name__ == '__main__':
-    app = create_app()
+# Run the app
+if __name__ == "__main__":
     app.run(debug=True)
