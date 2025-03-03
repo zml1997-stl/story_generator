@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>{{ story.title }}</h2>
+    <p>Genre: {{ story.genre }}</p>
+
+    <p>{{ story.current_state }}</p>
+
+    <h3>What happens next?</h3>
+    <ul>
+        {% for choice in choices %}
+        <li>
+            <a href="{{ url_for('story.continue_story', story_id=story.id, choice=choice) }}">{{ choice }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <hr>
+    <h3>Story History</h3>
+    <p>{{ story.history }}</p> <p>{{ story.prompt }}</p>
+{% endblock %}
