@@ -1,1 +1,1 @@
-web: sh -c 'gunicorn app:create_app()'
+web: gunicorn app:create_app --workers 1 --bind 0.0.0.0:$PORT
