@@ -1,41 +1,32 @@
-# services/gemini_service.py
-import google.generativeai as genai
-from config import Config
+import requests
+import os
 
-genai.configure(api_key=Config.GOOGLE_API_KEY)
+# Load API key from environment variable
+API_KEY = os.getenv("GEMINI_API_KEY")
 
-def generate_story_content(prompt):
-    """Generates story content using the Gemini API."""
-    model = genai.GenerativeModel('gemini-2.0-flash') #using flash model
-    try:
-        response = model.generate_content(prompt)
-        return response.text
-    except Exception as e:
-        print(f"Error generating content: {e}")
-        return None
+def generate_story(prompt: str, genre: str, user_name: str = "") -> str:
+    """
+    Interact with the Gemini API to generate a story based on the provided prompt, genre, and user input.
+    """
+    headers = {
+        "Authorization": f"Bearer {API_KEY}",
+        "Content-Type": "application/json",
+    }
 
-def generate_choices(current_state):
-    """Generates user choices based on the current story state."""
-    prompt = f"Based on the following story state: '{current_state}', generate 2-3 possible choices for the user. Return them as a list of strings."
-    model = genai.GenerativeModel('gemini-2.0-flash')
-    try:
-        response = model.generate_content(prompt)
-        # Attempt to split the response into a list of choices
-        choices = response.text.split('\n')
-        #Clean up choices
-        choices = [choice.strip("- *") for choice in choices]
-        return choices
-    except Exception as e:
-        print(f"Error generating choices: {e}")
-        return []
+    # Customize the prompt based on user input
+    user_prompt = f"{user_name}'s {genre} story: {prompt}" if user_name else f"{genre} story: {prompt}"
 
-def continue_story(current_state, user_choice):
-    """Continues the story based on the user's choice."""
-    prompt = f"Continue the story based on the following current state: '{current_state}' and the user's choice: '{user_choice}'. Limit the response to 2 paragraphs."
-    model = genai.GenerativeModel('gemini-2.0-flash')
-    try:
-        response = model.generate_content(prompt)
-        return response.text
-    except Exception as e:
-        print(f"Error continuing story: {e}")
-        return None
+    data = {
+        "model": "gemini-2.0-flash",
+        "prompt": user_prompt,
+        "max_tokens": 300,
+    }
+
+    # Make the API request
+    response = requests.post("https://api.gemini.example.com/v1/generate", headers=headers, json=data)
+
+    if response.status_code == 200:
+        story = response.json().get("text", "")
+        return story
+    else:
+        return "Sorry, we couldn't generate a story at this time."
