@@ -1,16 +1,28 @@
-# routes/main.py
-from flask import Blueprint, render_template, redirect, url_for, flash
-from flask_login import current_user, login_required
-from app import db
-from models.user import User
+from flask import Blueprint, render_template, request, redirect, url_for
+from services.gemini_service import generate_story
+from models import db
+from models.story import Story
 
-bp = Blueprint('main', __name__)
+main = Blueprint('main', __name__)
 
-@bp.route('/')
+@main.route('/')
 def index():
+    # Render the homepage where users can choose a story genre and prompt
     return render_template('index.html')
 
-@bp.route('/profile')
-@login_required
-def profile():
-    return render_template('profile.html', user=current_user)
+@main.route('/generate', methods=['POST'])
+def generate():
+    # Get input from the user (genre and prompt)
+    genre = request.form.get('genre')
+    prompt = request.form.get('prompt')
+    user_name = request.form.get('user_name', "")
+
+    # Generate the story using Gemini service
+    story_text = generate_story(prompt, genre, user_name)
+
+    # Optionally, save the generated story in the database
+    new_story = Story(title=prompt, genre=genre, plot=story_text)
+    db.session.add(new_story)
+    db.session.commit()
+
+    return render_template('story.html', story=story_text)
