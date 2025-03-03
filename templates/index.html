@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Welcome to the Interactive Story Generator!</h1>
+
+    <p>Choose a story prompt to begin your adventure:</p>
+
+    <ul>
+        <li><a href="{{ url_for('story.generate_story', genre='mystery') }}">Mystery</a></li>
+        <li><a href="{{ url_for('story.generate_story', genre='fantasy') }}">Fantasy</a></li>
+        <li><a href="{{ url_for('story.generate_story', genre='sci-fi') }}">Sci-Fi</a></li>
+        <li><a href="{{ url_for('story.generate_story', genre='romance') }}">Romance</a></li>
+    </ul>
+{% endblock %}
