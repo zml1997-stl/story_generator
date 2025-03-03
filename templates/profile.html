@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Hi, {{ user.username }}!</h1>
+
+    <p>Your email address is: {{ user.email }}</p>
+
+    <h2>Your Stories</h2>
+    <ul>
+        {% for story in user.stories %}
+        <li><a href="{{ url_for('story.view_story', story_id=story.id) }}">{{ story.title }}</a> ({{ story.genre }})</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
