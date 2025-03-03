@@ -1,14 +1,22 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block content %}
     <h1>Welcome to the Interactive Story Generator!</h1>
+    <form action="{{ url_for('main.generate') }}" method="POST">
+        <label for="genre">Choose a Genre:</label>
+        <select name="genre" id="genre">
+            <option value="mystery">Mystery</option>
+            <option value="fantasy">Fantasy</option>
+            <option value="sci-fi">Sci-Fi</option>
+            <option value="romance">Romance</option>
+        </select>
 
-    <p>Choose a story prompt to begin your adventure:</p>
+        <label for="prompt">Enter a Prompt:</label>
+        <textarea name="prompt" id="prompt" required></textarea>
 
-    <ul>
-        <li><a href="{{ url_for('story.generate_story', genre='mystery') }}">Mystery</a></li>
-        <li><a href="{{ url_for('story.generate_story', genre='fantasy') }}">Fantasy</a></li>
-        <li><a href="{{ url_for('story.generate_story', genre='sci-fi') }}">Sci-Fi</a></li>
-        <li><a href="{{ url_for('story.generate_story', genre='romance') }}">Romance</a></li>
-    </ul>
+        <label for="user_name">Enter your Name (optional):</label>
+        <input type="text" name="user_name" id="user_name">
+
+        <button type="submit">Generate Story</button>
+    </form>
 {% endblock %}
