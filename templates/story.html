@@ -1,21 +1,16 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block content %}
-    <h2>{{ story.title }}</h2>
-    <p>Genre: {{ story.genre }}</p>
+    <h1>Your Generated Story</h1>
+    <p><strong>Story Genre:</strong> {{ request.form.get('genre') }}</p>
+    <p><strong>Story Prompt:</strong> {{ request.form.get('prompt') }}</p>
 
-    <p>{{ story.current_state }}</p>
+    <div class="story-text">
+        <p>{{ story }}</p>
+    </div>
 
-    <h3>What happens next?</h3>
-    <ul>
-        {% for choice in choices %}
-        <li>
-            <a href="{{ url_for('story.continue_story', story_id=story.id, choice=choice) }}">{{ choice }}</a>
-        </li>
-        {% endfor %}
-    </ul>
-
-    <hr>
-    <h3>Story History</h3>
-    <p>{{ story.history }}</p> <p>{{ story.prompt }}</p>
+    <h2>Would you like to save this story?</h2>
+    <form action="{{ url_for('main.index') }}" method="GET">
+        <button type="submit">Go Back</button>
+    </form>
 {% endblock %}
