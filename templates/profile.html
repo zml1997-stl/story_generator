@@ -1,14 +1,13 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block content %}
-    <h1>Hi, {{ user.username }}!</h1>
+    <h1>{{ user.username }}'s Profile</h1>
+    <p>Welcome, {{ user.username }}! Here, you can manage your account and generated stories.</p>
 
-    <p>Your email address is: {{ user.email }}</p>
-
-    <h2>Your Stories</h2>
+    <h2>Your Generated Stories</h2>
     <ul>
         {% for story in user.stories %}
-        <li><a href="{{ url_for('story.view_story', story_id=story.id) }}">{{ story.title }}</a> ({{ story.genre }})</li>
+            <li><a href="{{ url_for('main.view_story', story_id=story.id) }}">{{ story.title }}</a></li>
         {% endfor %}
     </ul>
 {% endblock %}
